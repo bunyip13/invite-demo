@@ -1,0 +1,78 @@
+<div class="shadow-xl card bg-mgSecondary-background">
+  <div class="card-body">
+    <h2 class="card-title">Invite list</h2>
+    <div class="flex flex-col space-y-8">
+      @if (this.invites() && this.invites().length > 0) {
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Email</th>
+            <th>Remove</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (invite of this.invites(); track invite; let idx = $index) {
+          <tr data-testid="invite-table-row">
+            <th data-testid="invite-table-row-idx">{{ idx + 1 }}</th>
+            <td>{{ invite }}</td>
+            <td>
+              <button
+                attr.data-testid="invite-{{ idx }}"
+                class="btn btn-sm btn-circle btn-outline"
+                (click)="this.removeInvite(invite)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+      }
+      <div class="flex flex-row space-x-4">
+        <label class="w-full max-w-xs form-control">
+          <input
+            type="text"
+            placeholder="Custom email address"
+            class="w-full max-w-xs input input-bordered"
+            [formControl]="this.emailFormControl"
+          />
+        </label>
+        <button
+          class="btn btn-secondary"
+          data-testid="add-custom-email"
+          (click)="this.addEmail(this.emailFormControl)"
+          [disabled]="this.emailFormControl.invalid"
+        >
+          Add manually
+        </button>
+      </div>
+    </div>
+
+    <div class="justify-end card-actions">
+      <button
+        class="btn btn-primary"
+        [disabled]="this.invites().length === 0"
+        (click)="this.invite()"
+        data-testid="invite-all"
+      >
+        Invite all
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,134 @@
+<div class="flex flex-col space-y-4">
+  <div class="shadow-xl card bg-base-100">
+    @if (this.addressBook().isLoading) {
+
+    <div class="flex flex-col gap-4 w-52">
+      <div class="flex gap-4 items-center">
+        <div class="w-16 h-16 rounded-full skeleton shrink-0"></div>
+        <div class="flex flex-col gap-4">
+          <div class="w-20 h-4 skeleton"></div>
+          <div class="w-28 h-4 skeleton"></div>
+        </div>
+      </div>
+      <div class="w-full h-32 skeleton"></div>
+    </div>
+
+    } @if (this.addressBook().data; as data) {
+
+    <div class="card-body">
+      <h2 class="card-title">Counterparties</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Invite</th>
+            <th>Invite Group</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (address of data; track address._id; let idx = $index) {
+          <tr>
+            <th>{{ idx + 1 }}</th>
+            <td>{{ address.name.first }}</td>
+            <td>{{ address.name.last }}</td>
+            <td>
+              <button
+                attr.data-testid="{{ address._id }}"
+                class="text-white btn btn-primary btn-sm"
+                (click)="this.addInvite(address.email)"
+              >
+                Invite
+              </button>
+            </td>
+            <td>
+              @if ( address.groups !== null && address.groups !== undefined &&
+              address.groups.length > 0) {
+              <div class="dropdown">
+                <div
+                  tabindex="0"
+                  role="button"
+                  class="text-white btn btn-primary btn-sm"
+                >
+                  Invite group
+                </div>
+                <ul
+                  tabindex="0"
+                  class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                >
+                  @for (group of address?.groups; track group; let idx = $index)
+                  {
+                  <li>
+                    <a (click)="this.addGroup$(group).subscribe()">{{
+                      group
+                    }}</a>
+                  </li>
+                  }
+                </ul>
+              </div>
+              }
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    } @if (this.addressBook().isError) {
+    <p>Error</p>
+    }
+  </div>
+
+  @if (this.groups().data; as data) {
+  <div class="shadow-xl card bg-base-100">
+    <div class="card-body">
+      <h2 class="card-title">Groups</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Group name</th>
+            <th>Invite</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (group of data | keyvalue; track group.key; let idx = $index) {
+          <tr>
+            <th>{{ idx + 1 }}</th>
+            <td class="flex flex-col">
+              <div
+                tabindex="0"
+                class="border collapse collapse-plus border-base-300 bg-base-200"
+              >
+                <div class="min-h-0 text-sm font-medium collapse-title">{{ group.key }}</div>
+                <div class="flex flex-col collapse-content">
+                  @for (email of group.value; track email; let idx = $index) {
+                  <span>{{ email }}</span>
+                  }
+                </div>
+              </div>
+            </td>
+            <td>
+              <button
+                attr.data-testid="{{ group.key }}"
+                class="text-white btn btn-primary btn-sm"
+                (click)="this.addGroupEmails(group.value)"
+              >
+                Invite
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (this.groups().isError) {
+    <p>Error</p>
+    }
+  </div>
+  }
+</div>
